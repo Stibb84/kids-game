@@ -1,6 +1,6 @@
 # Pip's Puddle Parade
 
-A tiny, touch-friendly pond game for young children. Tap the glowing lily pad to help Pip hop along the pond path. Some lily pads have friends to meet; others are splashy stepping stones. Then tap the nest to find the duckling. There are no timers, scores, or wrong answers.
+A tiny, touch-friendly pond game for young children. Choose between connected lily pads and stepping stones, meet friends, and hop back and forth to explore the pond. Find all three friends, then reach the duckling's nest. There are no timers, scores, or wrong answers.
 
 ## Play
 

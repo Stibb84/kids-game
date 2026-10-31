@@ -239,17 +239,38 @@
 
     .lily.is-next .stone-mark { animation: friend-bob 1s ease-in-out infinite alternate; }
 
-    .lily-one { left: 25%; top: 52%; }
-    .lily-stone-one { left: 38%; top: 38%; }
-    .lily-two { left: 49%; top: 24%; }
-    .lily-stone-two { left: 59%; top: 40%; }
-    .lily-three { left: 70%; top: 52%; }
+    .stone-pad::before {
+      inset: 14% 6%;
+      border: 4px solid #8e9da0;
+      border-radius: 38% 52% 43% 48%;
+      background: linear-gradient(145deg, #d6e0d9, #9eadae);
+      box-shadow: 0 8px 0 #798d90, 0 12px 17px #216c6b36;
+      transform: rotate(-12deg);
+    }
+
+    .stone-pad.is-next::before {
+      border-color: #e4a941;
+      background: linear-gradient(145deg, #e8ebc7, #bdc9a0);
+      box-shadow: 0 8px 0 #a18d67, 0 12px 17px #216c6b36;
+    }
+
+    .stone-pad .friend-name { background: #f0f3e8; }
+
+    .lily-bella { left: 19%; top: 24%; }
+    .lily-upper-middle { left: 43%; top: 24%; }
+    .lily-daisy { left: 66%; top: 24%; }
+    .lily-lower-left { left: 19%; top: 56%; }
+    .lily-toby { left: 43%; top: 56%; }
+    .lily-lower-right { left: 66%; top: 56%; }
+    .stone-west { left: 30%; top: 40%; }
+    .stone-middle { left: 54%; top: 40%; }
+    .stone-east { left: 77%; top: 40%; }
 
     .nest {
       position: absolute;
       z-index: 2;
-      left: 80%;
-      top: 75%;
+      left: 82%;
+      top: 79%;
       display: grid;
       width: clamp(52px, 9vw, 78px);
       aspect-ratio: 1;
@@ -356,14 +377,17 @@
       .logo-mark { width: 40px; height: 40px; border-radius: 14px; font-size: 24px; }
       .tag { padding: 8px 10px; font-size: .76rem; }
       .scene { min-height: 250px; aspect-ratio: 1.14 / 1; }
-      .lily-one { left: 18%; top: 54%; }
-      .lily-stone-one { left: 34%; top: 39%; }
-      .lily-two { left: 47%; top: 25%; }
-      .lily-stone-two { left: 57%; top: 41%; }
-      .lily-three { left: 67%; top: 54%; }
-      .pip { left: 5%; top: 68%; }
+      .lily-bella, .lily-lower-left { left: 14%; }
+      .lily-upper-middle, .lily-toby { left: 39%; }
+      .lily-daisy, .lily-lower-right { left: 64%; }
+      .lily-bella, .lily-upper-middle, .lily-daisy { top: 22%; }
+      .lily-lower-left, .lily-toby, .lily-lower-right { top: 54%; }
+      .stone-west { left: 27%; top: 39%; }
+      .stone-middle { left: 52%; top: 39%; }
+      .stone-east { left: 77%; top: 39%; }
+      .pip { left: 4%; top: 78%; }
       .nest { left: 82%; top: 80%; width: 44px; font-size: 27px; }
-      .start-dot { left: 5%; top: 84%; width: 16%; }
+      .start-dot { left: 4%; top: 89%; width: 16%; }
       .footer { margin-top: 11px; }
     }
 
@@ -381,7 +405,7 @@
         <span class="tag">Ein kleines Hüpf-und-Such-Spiel</span>
       </div>
       <h1>Pips Teichparade</h1>
-      <p class="intro">Hilf Pip, über Seerosenblätter zu hüpfen, drei Freunde zu treffen und das Entenküken zu finden!</p>
+      <p class="intro">Wähle deinen Weg über Seerosenblätter und echte Steine im Wasser. Du kannst hin und her hüpfen!</p>
     </header>
 
     <div class="parade" aria-live="polite">
@@ -391,7 +415,7 @@
     </div>
     <template id="friend-chip-template"><span class="friend-chip"></span></template>
 
-    <section class="scene" aria-label="Ein sonniger Teich mit drei Freunden und zwei leeren Seerosenblättern">
+    <section class="scene" aria-label="Ein sonniger Teich mit Seerosenblättern und Steinen. Du kannst zwischen verbundenen Plätzen hin und her hüpfen.">
       <svg class="pond-art" viewBox="0 0 1000 570" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="water" x2="0" y2="1">
@@ -433,20 +457,32 @@
       <div class="start-dot" aria-hidden="true"></div>
       <div class="pip" id="pip" aria-label="Pip, der Frosch">🐸</div>
 
-      <button class="lily lily-one is-next" type="button" data-friend="🦋" data-name="Bella, der Schmetterling" aria-label="Hüpfe zu Bella auf dem ersten Seerosenblatt">
+      <button class="lily lily-bella" type="button" data-stop="bella" data-links="upper-middle,lower-left,west-stone" data-friend="🦋" data-name="Bella, der Schmetterling" aria-label="Hüpfe zu Bella, dem Schmetterling">
         <span class="friend" aria-hidden="true">🦋</span><span class="friend-name">Bella</span>
       </button>
-      <button class="lily lily-stone-one" type="button" aria-label="Hüpfe auf das leere Seerosenblatt" disabled>
+      <button class="lily lily-upper-middle" type="button" data-stop="upper-middle" data-links="bella,daisy,toby,west-stone,middle-stone" aria-label="Hüpfe auf das leere Seerosenblatt in der oberen Mitte" disabled>
         <span class="stone-mark" aria-hidden="true">💧</span><span class="friend-name">Platsch!</span>
       </button>
-      <button class="lily lily-two" type="button" data-friend="🐢" data-name="Tobi, die Schildkröte" aria-label="Hüpfe zu Tobi auf dem zweiten Seerosenblatt" disabled>
+      <button class="lily lily-daisy" type="button" data-stop="daisy" data-links="upper-middle,lower-right,east-stone,middle-stone" data-friend="🦆" data-name="Daisy, die Ente" aria-label="Hüpfe zu Daisy, der Ente" disabled>
+        <span class="friend" aria-hidden="true">🦆</span><span class="friend-name">Daisy</span>
+      </button>
+      <button class="lily lily-lower-left" type="button" data-stop="lower-left" data-links="bella,toby,west-stone" aria-label="Hüpfe auf das leere Seerosenblatt unten links" disabled>
+        <span class="stone-mark" aria-hidden="true">💧</span><span class="friend-name">Platsch!</span>
+      </button>
+      <button class="lily lily-toby" type="button" data-stop="toby" data-links="upper-middle,lower-left,lower-right,west-stone,middle-stone,east-stone" data-friend="🐢" data-name="Tobi, die Schildkröte" aria-label="Hüpfe zu Tobi, der Schildkröte" disabled>
         <span class="friend" aria-hidden="true">🐢</span><span class="friend-name">Tobi</span>
       </button>
-      <button class="lily lily-stone-two" type="button" aria-label="Hüpfe auf das leere Seerosenblatt" disabled>
+      <button class="lily lily-lower-right" type="button" data-stop="lower-right" data-links="daisy,toby,middle-stone,east-stone" aria-label="Hüpfe auf das leere Seerosenblatt unten rechts" disabled>
         <span class="stone-mark" aria-hidden="true">💧</span><span class="friend-name">Platsch!</span>
       </button>
-      <button class="lily lily-three" type="button" data-friend="🦆" data-name="Daisy, die Ente" aria-label="Hüpfe zu Daisy auf dem dritten Seerosenblatt" disabled>
-        <span class="friend" aria-hidden="true">🦆</span><span class="friend-name">Daisy</span>
+      <button class="lily stone-pad stone-west" type="button" data-stop="west-stone" data-links="bella,upper-middle,lower-left,toby,middle-stone" aria-label="Hüpfe auf den Stein links im Wasser" disabled>
+        <span class="stone-mark" aria-hidden="true">🪨</span><span class="friend-name">Stein</span>
+      </button>
+      <button class="lily stone-pad stone-middle" type="button" data-stop="middle-stone" data-links="upper-middle,daisy,toby,lower-right,west-stone,east-stone" aria-label="Hüpfe auf den Stein in der Mitte des Wassers" disabled>
+        <span class="stone-mark" aria-hidden="true">🪨</span><span class="friend-name">Stein</span>
+      </button>
+      <button class="lily stone-pad stone-east" type="button" data-stop="east-stone" data-links="daisy,toby,lower-right,middle-stone" aria-label="Hüpfe auf den Stein rechts im Wasser" disabled>
+        <span class="stone-mark" aria-hidden="true">🪨</span><span class="friend-name">Stein</span>
       </button>
       <button class="nest" id="duckling-nest" type="button" aria-label="Hüpfe zum Nest des Entenkükens" hidden>🪺</button>
     </section>
@@ -464,6 +500,7 @@
   <script>
     (() => {
       const pads = Array.from(document.querySelectorAll(".lily"));
+      const padsByStop = new Map(pads.map((pad) => [pad.dataset.stop, pad]));
       const pip = document.getElementById("pip");
       const message = document.getElementById("message");
       const friendList = document.getElementById("friend-list");
@@ -472,8 +509,8 @@
       const replay = document.getElementById("play-again");
       const nest = document.getElementById("duckling-nest");
       const found = new Set();
-      const visited = new Set();
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let currentStop = null;
       let hopping = false;
       let paradeComplete = false;
 
@@ -499,9 +536,27 @@
         pip.style.top = `${top}px`;
       }
 
+      function getReachableStops(stop) {
+        if (stop === null) return ["bella", "lower-left"];
+        return padsByStop.get(stop).dataset.links.split(",");
+      }
+
+      function updateChoices() {
+        const reachable = getReachableStops(currentStop);
+        pads.forEach((pad) => {
+          const canReach = reachable.includes(pad.dataset.stop);
+          pad.disabled = hopping || !canReach;
+          pad.classList.toggle("is-next", canReach && !hopping);
+        });
+        const canReachNest = currentStop === "daisy" || currentStop === "lower-right" || currentStop === "east-stone";
+        nest.hidden = found.size !== 3;
+        nest.disabled = hopping || !canReachNest;
+      }
+
       function hopTo(pad) {
-        if (hopping || visited.has(pad)) return;
+        if (hopping || pad.disabled) return;
         hopping = true;
+        updateChoices();
         animateIfAllowed(pip, [
           { transform: "translateY(0) scale(1,1)" },
           { transform: "translateY(-45px) scale(.92,1.08)", offset: .34 },
@@ -511,56 +566,52 @@
         movePipTo(pad);
 
         window.setTimeout(() => {
-          visited.add(pad);
-          pad.classList.remove("is-next");
+          currentStop = pad.dataset.stop;
           if (pad.dataset.friend) {
-            found.add(pad);
-            pad.style.setProperty("--pad-border", "#8bc77a");
-            pad.style.setProperty("--pad-background", "linear-gradient(145deg, #c0e8a0, #9bd889)");
-            pad.style.setProperty("--pad-shadow", "0 5px 0 #68ad72, 0 8px 13px #216c6b28");
-            animateIfAllowed(pad.querySelector(".friend"), [
-              { transform: "scale(1)" },
-              { transform: "scale(1.14) rotate(-8deg)" }
-            ], { duration: 300, fill: "forwards" });
-            pad.querySelector(".friend-name").style.background = "white";
+            const isNewFriend = !found.has(currentStop);
+            if (isNewFriend) {
+              found.add(currentStop);
+              pad.style.setProperty("--pad-border", "#8bc77a");
+              pad.style.setProperty("--pad-background", "linear-gradient(145deg, #c0e8a0, #9bd889)");
+              pad.style.setProperty("--pad-shadow", "0 5px 0 #68ad72, 0 8px 13px #216c6b28");
+              animateIfAllowed(pad.querySelector(".friend"), [
+                { transform: "scale(1)" },
+                { transform: "scale(1.14) rotate(-8deg)" }
+              ], { duration: 300, fill: "forwards" });
+              pad.querySelector(".friend-name").style.background = "white";
+              const chip = friendChipTemplate.content.firstElementChild.cloneNode();
+              chip.textContent = pad.dataset.friend;
+              chip.setAttribute("aria-label", pad.dataset.name);
+              friendList.append(chip);
+              friendList.setAttribute("aria-label", `${found.size} ${found.size === 1 ? "Freund" : "Freunde"} gefunden`);
+              counter.textContent = `${found.size} von 3`;
+            }
+
+            if (found.size === 3) {
+              say("🎉", "Alle drei Freunde sind da! Hüpfe zum Nest am Teichrand.");
+            } else if (!isNewFriend) {
+              say("✨", `${pad.dataset.name} sagt Hallo! Such dir den nächsten Weg aus.`);
+            } else {
+              say("✨", `${pad.dataset.name} sagt Hallo! Wen besucht Pip als Nächstes?`);
+            }
           } else {
             pad.style.setProperty("--pad-border", "#69b4a2");
             pad.style.setProperty("--pad-background", "linear-gradient(145deg, #b6e9c5, #83d2b6)");
             pad.style.setProperty("--pad-shadow", "0 5px 0 #57a58f, 0 8px 13px #216c6b28");
-          }
-          pad.disabled = true;
-
-          if (pad.dataset.friend) {
-            const chip = friendChipTemplate.content.firstElementChild.cloneNode();
-            chip.textContent = pad.dataset.friend;
-            chip.setAttribute("aria-label", pad.dataset.name);
-            friendList.append(chip);
-            friendList.setAttribute("aria-label", `${found.size} ${found.size === 1 ? "Freund" : "Freunde"} gefunden`);
-            counter.textContent = `${found.size} von 3`;
-          }
-
-          const next = pads.find((candidate) => !visited.has(candidate));
-          if (next) {
-            next.disabled = false;
-            next.classList.add("is-next");
-            if (pad.dataset.friend) {
-              say("✨", `${pad.dataset.name} sagt Hallo! Wen besucht Pip als Nächstes?`);
-            } else {
-              say("💦", "Platsch! Pip hüpft weiter. Gleich wartet der nächste Freund!");
-            }
-          } else {
-            nest.hidden = false;
-            say("🪺", "Drei Freunde! Tippe auf das Nest, damit Pip das Entenküken findet!");
+            say("💦", "Platsch! Du kannst auch wieder zurückhüpfen oder einen anderen Weg nehmen.");
           }
           hopping = false;
+          updateChoices();
         }, 720);
       }
 
       pads.forEach((pad) => pad.addEventListener("click", () => hopTo(pad)));
+      updateChoices();
 
       nest.addEventListener("click", () => {
-        if (hopping || paradeComplete || visited.size !== pads.length) return;
+        if (hopping || paradeComplete || found.size !== 3 || nest.disabled) return;
         hopping = true;
+        updateChoices();
         animateIfAllowed(pip, [
           { transform: "translateY(0) scale(1,1)" },
           { transform: "translateY(-45px) scale(.92,1.08)", offset: .34 },
@@ -586,8 +637,9 @@
 
       replay.addEventListener("click", () => {
         found.clear();
-        visited.clear();
         paradeComplete = false;
+        currentStop = null;
+        hopping = false;
         friendList.replaceChildren();
         friendList.setAttribute("aria-label", "Noch keine Freunde gefunden");
         counter.textContent = "0 von 3";
@@ -597,8 +649,8 @@
         nest.hidden = true;
         nest.disabled = false;
         nest.textContent = "🪺";
-        pads.forEach((pad, index) => {
-          pad.disabled = index !== 0;
+        pads.forEach((pad) => {
+          pad.disabled = true;
           pad.style.removeProperty("--pad-border");
           pad.style.removeProperty("--pad-background");
           pad.style.removeProperty("--pad-shadow");
@@ -609,8 +661,8 @@
             friend.style.transform = "";
           }
           pad.classList.remove("is-next");
-          if (index === 0) pad.classList.add("is-next");
         });
+        updateChoices();
         replay.hidden = true;
         say("👆", "Tippe auf das leuchtende Seerosenblatt, damit Pip loshüpft!");
         pads[0].focus();
