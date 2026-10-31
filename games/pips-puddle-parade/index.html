@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#bceff0">
+  <title>Pips Teichparade</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Trebuchet MS", "Arial Rounded MT Bold", Arial, sans-serif;
+      color: #174e59;
+      background: #e8faf6;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      --deep: #174e59;
+      --pad-border: #4d9d70;
+      --pad-background: linear-gradient(145deg, #91d782, #56b977);
+      --pad-shadow: 0 8px 0 #388d6a, 0 12px 17px #216c6b36;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      padding: clamp(12px, 3vw, 32px);
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at 12% 18%, #fff8d8 0 4%, transparent 4.3%),
+        radial-gradient(ellipse at 88% 82%, #d2f3e7 0 6%, transparent 6.3%),
+        #e8faf6;
+    }
+
+    button { font: inherit; }
+
+    .game {
+      width: min(100%, 980px);
+      padding: clamp(18px, 4vw, 34px);
+      border: 4px solid #fff;
+      border-radius: 34px;
+      background: #fffefa;
+      box-shadow: 0 18px 50px #337b7130;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 5px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--deep);
+      font-weight: 900;
+      letter-spacing: .01em;
+    }
+
+    .logo-mark {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border-radius: 17px;
+      background: #d9f5e4;
+      font-size: 29px;
+    }
+
+    .tag {
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: #fff3c6;
+      font-size: .85rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    h1 {
+      margin: 16px 0 4px;
+      color: #164c55;
+      font-size: clamp(1.7rem, 5vw, 2.45rem);
+      letter-spacing: -.035em;
+      text-align: center;
+    }
+
+    .intro {
+      margin: 0 auto 18px;
+      color: #547a7e;
+      font-size: clamp(.98rem, 2.6vw, 1.1rem);
+      text-align: center;
+    }
+
+    .parade {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin: 0 0 15px;
+      color: #37676b;
+      font-weight: 800;
+    }
+
+    .friend-list {
+      display: inline-flex;
+      gap: 5px;
+      min-height: 34px;
+      align-items: center;
+    }
+
+    .friend-chip {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 2px solid #d5efdf;
+      border-radius: 50%;
+      background: white;
+      font-size: 20px;
+      animation: pop-in .35s ease-out both;
+    }
+
+    .scene {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      aspect-ratio: 1.75 / 1;
+      min-height: 270px;
+      max-height: 490px;
+      border: 5px solid white;
+      border-radius: 27px;
+      background: #a9e8e4;
+      box-shadow: 0 7px 20px #28696b22;
+      isolation: isolate;
+    }
+
+    .pond-art {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .sun {
+      position: absolute;
+      top: 7%;
+      right: 8%;
+      display: grid;
+      width: clamp(45px, 8vw, 74px);
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffe58d;
+      box-shadow: 0 0 0 9px #fff3b442;
+      font-size: clamp(24px, 4vw, 38px);
+    }
+
+    .lily {
+      position: absolute;
+      z-index: 1;
+      display: grid;
+      width: clamp(84px, 14vw, 126px);
+      aspect-ratio: 1.22;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: inherit;
+      background: transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: filter .2s, transform .2s;
+    }
+
+    .lily::before {
+      position: absolute;
+      inset: 12% 2%;
+      z-index: -1;
+      border: 4px solid var(--pad-border);
+      border-radius: 50%;
+      background: var(--pad-background);
+      box-shadow: var(--pad-shadow);
+      content: "";
+      transform: rotate(-8deg);
+      transition: background .2s, box-shadow .2s, transform .2s;
+    }
+
+    .lily:hover:not(:disabled) { transform: translateY(-4px) scale(1.04); }
+    .lily:focus-visible { outline: 5px solid #fff; outline-offset: 3px; }
+
+    .lily:disabled { cursor: default; }
+
+    .lily.is-next::before {
+      border-color: #e4a941;
+      background: linear-gradient(145deg, #b6e982, #79cc77);
+      box-shadow: 0 8px 0 #b4813e, 0 12px 17px #216c6b36;
+      animation: bob 1.8s ease-in-out infinite;
+    }
+
+    .friend {
+      position: absolute;
+      top: -13%;
+      z-index: 2;
+      font-size: clamp(26px, 5vw, 43px);
+      filter: drop-shadow(0 3px 1px #2763552b);
+      transition: transform .3s;
+    }
+
+    .friend-name {
+      position: absolute;
+      bottom: 1%;
+      z-index: 2;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #fff9dc;
+      color: #315d59;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .lily.is-next .friend { animation: friend-bob 1s ease-in-out infinite alternate; }
+
+    .lily-one { left: 28%; top: 51%; }
+    .lily-two { left: 48%; top: 27%; }
+    .lily-three { left: 68%; top: 52%; }
+
+    .nest {
+      position: absolute;
+      z-index: 2;
+      left: 80%;
+      top: 75%;
+      display: grid;
+      width: clamp(52px, 9vw, 78px);
+      aspect-ratio: 1;
+      place-items: center;
+      padding: 0;
+      border: 4px solid #fff3d4;
+      border-radius: 50%;
+      background: #e6b875;
+      box-shadow: 0 6px 0 #b98550, 0 8px 14px #216c6b36;
+      cursor: pointer;
+      font-size: clamp(32px, 6vw, 48px);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .nest:not([hidden]) { animation: bob 1.8s ease-in-out infinite; }
+    .nest:hover { transform: translateY(-4px) scale(1.05); }
+    .nest:focus-visible { outline: 5px solid white; outline-offset: 3px; }
+
+    .pip {
+      position: absolute;
+      z-index: 4;
+      left: 8%;
+      top: 68%;
+      display: grid;
+      width: clamp(52px, 9vw, 82px);
+      aspect-ratio: 1;
+      place-items: center;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: #e0f6d2;
+      box-shadow: 0 7px 0 #67a76c, 0 10px 18px #23646635;
+      font-size: clamp(30px, 6vw, 54px);
+      pointer-events: none;
+      transition: left .72s cubic-bezier(.2,.8,.25,1), top .72s cubic-bezier(.2,.8,.25,1);
+    }
+
+    .start-dot {
+      position: absolute;
+      left: 7%;
+      top: 84%;
+      width: 11%;
+      height: 8%;
+      border-radius: 50%;
+      background: #60bda6;
+      opacity: .55;
+      transform: rotate(-12deg);
+    }
+
+    .message {
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px 0;
+      color: #315e62;
+      font-size: clamp(.94rem, 2.5vw, 1.08rem);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .message-icon { font-size: 1.35rem; }
+
+    .controls {
+      display: flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      padding-top: 5px;
+    }
+
+    .play-again {
+      min-height: 48px;
+      padding: 11px 22px;
+      border: 0;
+      border-radius: 999px;
+      background: #ffcc69;
+      color: #654516;
+      cursor: pointer;
+      font-weight: 900;
+      box-shadow: 0 4px 0 #e5a84e;
+      transition: transform .15s, background .15s;
+    }
+
+    .play-again:hover { background: #ffdc80; transform: translateY(-2px); }
+    .play-again:active { transform: translateY(2px); box-shadow: 0 2px 0 #e5a84e; }
+    .play-again:focus-visible { outline: 4px solid #328379; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+
+    .footer {
+      margin: 15px 0 0;
+      color: #729091;
+      font-size: .82rem;
+      text-align: center;
+    }
+
+    @keyframes bob { 0%, 100% { transform: rotate(-8deg) translateY(0); } 50% { transform: rotate(-8deg) translateY(-5px); } }
+    @keyframes friend-bob { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-5px) rotate(4deg); } }
+    @keyframes pop-in { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
+
+    @media (max-width: 560px) {
+      body { padding: 10px; }
+      .game { padding: 16px 13px 15px; border-width: 3px; border-radius: 26px; }
+      .logo-mark { width: 40px; height: 40px; border-radius: 14px; font-size: 24px; }
+      .tag { padding: 8px 10px; font-size: .76rem; }
+      .scene { min-height: 250px; aspect-ratio: 1.14 / 1; }
+      .lily-one { left: 23%; top: 47%; }
+      .lily-two { left: 48%; top: 23%; }
+      .lily-three { left: 64%; top: 47%; }
+      .pip { left: 5%; top: 68%; }
+      .nest { left: 82%; top: 80%; width: 44px; font-size: 27px; }
+      .start-dot { left: 5%; top: 84%; width: 16%; }
+      .footer { margin-top: 11px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+      .pip { transition-duration: .01ms; }
+    }
+  </style>
+</head>
+<body>
+  <main class="game">
+    <header>
+      <div class="topline">
+        <div class="logo"><span class="logo-mark" aria-hidden="true">🐸</span><span>Pips Teich</span></div>
+        <span class="tag">Ein kleines Hüpf-und-Such-Spiel</span>
+      </div>
+      <h1>Pips Teichparade</h1>
+      <p class="intro">Hilf Pip, über den Teich zu hüpfen, drei Freunde zu treffen und das Entenküken zu finden!</p>
+    </header>
+
+    <div class="parade" aria-live="polite">
+      <span>Gefundene Freunde</span>
+      <span class="friend-list" id="friend-list" aria-label="Noch keine Freunde gefunden"></span>
+      <span id="counter">0 von 3</span>
+    </div>
+    <template id="friend-chip-template"><span class="friend-chip"></span></template>
+
+    <section class="scene" aria-label="Ein sonniger Teich mit drei freundlichen Seerosenblättern">
+      <svg class="pond-art" viewBox="0 0 1000 570" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="water" x2="0" y2="1">
+            <stop stop-color="#b5ece5"/>
+            <stop offset="1" stop-color="#79d2c9"/>
+          </linearGradient>
+          <linearGradient id="bank" x2="0" y2="1">
+            <stop stop-color="#aee18f"/>
+            <stop offset="1" stop-color="#82cb8c"/>
+          </linearGradient>
+        </defs>
+        <rect width="1000" height="570" fill="url(#water)"/>
+        <path d="M0 0h1000v119c-89 33-134 15-222 7-116-11-183 30-306 20-158-13-222-57-472-5z" fill="#d9f3bd"/>
+        <path d="M0 0h1000v73c-140 31-212 7-316 25-131 22-241 4-363-21C200 56 94 87 0 91z" fill="url(#bank)"/>
+        <path d="M0 493c176-54 251 27 408 8 192-22 236 28 383 5 88-14 145-36 209-19v83H0z" fill="#9bd585"/>
+        <g fill="#fff" opacity=".48">
+          <ellipse cx="187" cy="210" rx="43" ry="5"/><ellipse cx="802" cy="314" rx="51" ry="5"/>
+          <ellipse cx="431" cy="410" rx="36" ry="4"/><ellipse cx="902" cy="191" rx="29" ry="4"/>
+          <ellipse cx="312" cy="326" rx="28" ry="4"/>
+        </g>
+        <g fill="#ffe986">
+          <circle cx="95" cy="100" r="5"/><circle cx="155" cy="77" r="4"/><circle cx="853" cy="110" r="5"/>
+          <circle cx="904" cy="89" r="3"/><circle cx="941" cy="463" r="5"/><circle cx="119" cy="449" r="4"/>
+        </g>
+        <g fill="none" stroke="#57a98d" stroke-linecap="round" stroke-width="9">
+          <path d="M89 530q-7-68 5-105"/><path d="M115 527q4-72 30-102"/><path d="M874 526q-2-65 13-91"/>
+          <path d="M916 525q3-53 34-82"/>
+        </g>
+        <g fill="#ffb5a5">
+          <circle cx="97" cy="418" r="9"/><circle cx="145" cy="421" r="9"/><circle cx="885" cy="438" r="9"/>
+          <circle cx="950" cy="433" r="9"/>
+        </g>
+        <g fill="#fff" opacity=".75">
+          <path d="M193 148q10-14 20 0-10-4-20 0"/><path d="M790 422q10-14 20 0-10-4-20 0"/>
+          <path d="M377 236q10-14 20 0-10-4-20 0"/><path d="M626 183q10-14 20 0-10-4-20 0"/>
+        </g>
+      </svg>
+      <div class="sun" aria-hidden="true">☀️</div>
+      <div class="start-dot" aria-hidden="true"></div>
+      <div class="pip" id="pip" aria-label="Pip, der Frosch">🐸</div>
+
+      <button class="lily lily-one is-next" type="button" data-friend="🦋" data-name="Bella, der Schmetterling" data-left="28" data-top="51" aria-label="Hüpfe zu Bella auf dem ersten Seerosenblatt">
+        <span class="friend" aria-hidden="true">🦋</span><span class="friend-name">Bella</span>
+      </button>
+      <button class="lily lily-two" type="button" data-friend="🐢" data-name="Tobi, die Schildkröte" data-left="48" data-top="27" aria-label="Hüpfe zu Tobi auf dem zweiten Seerosenblatt" disabled>
+        <span class="friend" aria-hidden="true">🐢</span><span class="friend-name">Tobi</span>
+      </button>
+      <button class="lily lily-three" type="button" data-friend="🦆" data-name="Daisy, die Ente" data-left="68" data-top="52" aria-label="Hüpfe zu Daisy auf dem dritten Seerosenblatt" disabled>
+        <span class="friend" aria-hidden="true">🦆</span><span class="friend-name">Daisy</span>
+      </button>
+      <button class="nest" id="duckling-nest" type="button" aria-label="Hüpfe zum Nest des Entenkükens" hidden>🪺</button>
+    </section>
+
+    <div class="message" id="message" role="status" aria-live="polite">
+      <span class="message-icon" aria-hidden="true">👆</span>
+      <span>Tippe auf das leuchtende Seerosenblatt, damit Pip loshüpft!</span>
+    </div>
+    <div class="controls">
+      <button class="play-again" id="play-again" type="button" hidden>Nochmal spielen!</button>
+    </div>
+    <p class="footer">Lass dir Zeit. Jeder Hüpfer macht Freude!</p>
+  </main>
+
+  <script>
+    (() => {
+      const pads = Array.from(document.querySelectorAll(".lily"));
+      const pip = document.getElementById("pip");
+      const message = document.getElementById("message");
+      const friendList = document.getElementById("friend-list");
+      const friendChipTemplate = document.getElementById("friend-chip-template");
+      const counter = document.getElementById("counter");
+      const replay = document.getElementById("play-again");
+      const nest = document.getElementById("duckling-nest");
+      const found = new Set();
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let hopping = false;
+      let paradeComplete = false;
+
+      function animateIfAllowed(element, frames, options) {
+        if (!reduceMotion) element.animate(frames, options);
+      }
+
+      function say(icon, text) {
+        message.replaceChildren();
+        const emoji = document.createElement("span");
+        emoji.className = "message-icon";
+        emoji.setAttribute("aria-hidden", "true");
+        emoji.textContent = icon;
+        const words = document.createElement("span");
+        words.textContent = text;
+        message.append(emoji, words);
+      }
+
+      function hopTo(pad) {
+        if (hopping || found.has(pad)) return;
+        hopping = true;
+        const left = Number(pad.dataset.left);
+        const top = Number(pad.dataset.top);
+        animateIfAllowed(pip, [
+          { transform: "translateY(0) scale(1,1)" },
+          { transform: "translateY(-45px) scale(.92,1.08)", offset: .34 },
+          { transform: "translateY(-5px) scale(1.08,.94)", offset: .68 },
+          { transform: "translateY(0) scale(1,1)" }
+        ], { duration: 720, easing: "ease-in-out" });
+        pip.style.left = `calc(${left}% + 8px)`;
+        pip.style.top = `calc(${top}% + 8px)`;
+
+        window.setTimeout(() => {
+          found.add(pad);
+          pad.classList.remove("is-next");
+          pad.style.setProperty("--pad-border", "#8bc77a");
+          pad.style.setProperty("--pad-background", "linear-gradient(145deg, #c0e8a0, #9bd889)");
+          pad.style.setProperty("--pad-shadow", "0 5px 0 #68ad72, 0 8px 13px #216c6b28");
+          animateIfAllowed(pad.querySelector(".friend"), [
+            { transform: "scale(1)" },
+            { transform: "scale(1.14) rotate(-8deg)" }
+          ], { duration: 300, fill: "forwards" });
+          pad.querySelector(".friend-name").style.background = "white";
+          pad.disabled = true;
+
+          const chip = friendChipTemplate.content.firstElementChild.cloneNode();
+          chip.textContent = pad.dataset.friend;
+          chip.setAttribute("aria-label", pad.dataset.name);
+          friendList.append(chip);
+          friendList.setAttribute("aria-label", `${found.size} ${found.size === 1 ? "Freund" : "Freunde"} gefunden`);
+          counter.textContent = `${found.size} von 3`;
+
+          const next = pads.find((candidate) => !found.has(candidate));
+          if (next) {
+            next.disabled = false;
+            next.classList.add("is-next");
+            say("✨", `${pad.dataset.name} sagt Hallo! Wen besucht Pip als Nächstes?`);
+          } else {
+            nest.hidden = false;
+            say("🪺", "Drei Freunde! Tippe auf das Nest, damit Pip das Entenküken findet!");
+          }
+          hopping = false;
+        }, 720);
+      }
+
+      pads.forEach((pad) => pad.addEventListener("click", () => hopTo(pad)));
+
+      nest.addEventListener("click", () => {
+        if (hopping || paradeComplete || found.size !== pads.length) return;
+        hopping = true;
+        animateIfAllowed(pip, [
+          { transform: "translateY(0) scale(1,1)" },
+          { transform: "translateY(-45px) scale(.92,1.08)", offset: .34 },
+          { transform: "translateY(-5px) scale(1.08,.94)", offset: .68 },
+          { transform: "translateY(0) scale(1,1)" }
+        ], { duration: 720, easing: "ease-in-out" });
+        pip.style.left = "calc(80% + 8px)";
+        pip.style.top = "calc(75% + 8px)";
+        window.setTimeout(() => {
+          hopping = false;
+          paradeComplete = true;
+          nest.disabled = true;
+          nest.textContent = "🐤";
+          animateIfAllowed(pip, [
+            { transform: "translateY(0) rotate(0)" },
+            { transform: "translateY(-20px) rotate(12deg)" },
+            { transform: "translateY(0) rotate(0)" }
+          ], { duration: 600, iterations: 3, easing: "ease-in-out" });
+          say("🎉", "Pip hat das Entenküken gefunden! Was für eine schöne Teichparade!");
+          replay.hidden = false;
+          replay.focus();
+        }, 720);
+      });
+
+      replay.addEventListener("click", () => {
+        found.clear();
+        paradeComplete = false;
+        friendList.replaceChildren();
+        friendList.setAttribute("aria-label", "Noch keine Freunde gefunden");
+        counter.textContent = "0 von 3";
+        pip.getAnimations().forEach((animation) => animation.cancel());
+        pip.style.left = "";
+        pip.style.top = "";
+        nest.hidden = true;
+        nest.disabled = false;
+        nest.textContent = "🪺";
+        pads.forEach((pad, index) => {
+          pad.disabled = index !== 0;
+          pad.style.removeProperty("--pad-border");
+          pad.style.removeProperty("--pad-background");
+          pad.style.removeProperty("--pad-shadow");
+          pad.querySelector(".friend-name").style.background = "";
+          pad.querySelector(".friend").getAnimations().forEach((animation) => animation.cancel());
+          pad.querySelector(".friend").style.transform = "";
+          pad.classList.remove("is-next");
+          if (index === 0) pad.classList.add("is-next");
+        });
+        replay.hidden = true;
+        say("👆", "Tippe auf das leuchtende Seerosenblatt, damit Pip loshüpft!");
+        pads[0].focus();
+      });
+    })();
+  </script>
+</body>
+</html>
